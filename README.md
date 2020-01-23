@@ -1,6 +1,6 @@
-# Neural Networks for Telecommunications Applications
+# Identification of Non-Linear RF Systems Using Backpropagation
 
-This directory contains the source-code used for various telecommunicaitons applications, including the complex-valued neural network project.
+This directory contains the source-code used for SI cancellation using model-based NNs and complex-valued neural networks.
 The directory contains the following sub-directories:
 
 * [applications](./applications): Contains the source code for specific applications, e.g. full-duplex cancellation.
