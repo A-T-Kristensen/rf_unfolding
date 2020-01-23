@@ -38,7 +38,7 @@ def save_data_nn(
     Parameters
     ----------
     name        : str
-        Name of the model (hammerstein, complex_rnn, rnn, complex_ffnn, ffnn).
+        Name of the model (model_based_nn, complex_rnn, rnn, complex_ffnn, ffnn).
     params      : :obj:
         Parameters.
     model       : :obj:
@@ -106,7 +106,7 @@ def save_data_nn(
     save_csv_nn(path, params, model, flop_func, test_dict, canc_lin, "reduced_cmult")
 
 
-def save_data_hammerstein(
+def save_data_model_based_nn(
     name,
     params,
     model,
@@ -128,7 +128,7 @@ def save_data_hammerstein(
     Parameters
     ----------
     name        : str
-        Name of the model (hammerstein, complex_rnn, rnn, complex_ffnn, ffnn).
+        Name of the model (model_based_nn, complex_rnn, rnn, complex_ffnn, ffnn).
     params      : :obj:
         Parameters.
     model       : :obj:
@@ -184,18 +184,18 @@ def save_data_hammerstein(
     common_str = output_dir + os.sep + name + "_" + params.fit_option + "_"
 
     path = common_str + "train" + "_" + "default" + ".csv"
-    save_csv_hammerstein(path, params, model, flop_func, train_dict, canc_lin, "default")
+    save_csv_model_based_nn(path, params, model, flop_func, train_dict, canc_lin, "default")
 
     path = common_str + "test" + "_" + "default" + ".csv"
-    save_csv_hammerstein(path, params, model, flop_func, test_dict, canc_lin, "default")
+    save_csv_model_based_nn(path, params, model, flop_func, test_dict, canc_lin, "default")
 
     path = common_str + "train" + "_" + "reduced_cmult" + ".csv"
-    save_csv_hammerstein(path, params, model, flop_func, train_dict, canc_lin, "reduced_cmult")
+    save_csv_model_based_nn(path, params, model, flop_func, train_dict, canc_lin, "reduced_cmult")
 
     path = common_str + "test" + "_" + "reduced_cmult" + ".csv"
-    save_csv_hammerstein(path, params, model, flop_func, test_dict, canc_lin, "reduced_cmult")
+    save_csv_model_based_nn(path, params, model, flop_func, test_dict, canc_lin, "reduced_cmult")
 
-    save_weights_hammerstein(params, prefix, postfix, K1_array, K2_array, weights_array)
+    save_weights_model_based_nn(params, prefix, postfix, K1_array, K2_array, weights_array)
 
 
 def convert_np_to_int(input):
@@ -410,7 +410,7 @@ def save_csv_nn(
     df.to_csv(path, index=False)
 
 
-def save_csv_hammerstein(
+def save_csv_model_based_nn(
     path,
     params,
     model,
@@ -560,7 +560,7 @@ def save_csv_hammerstein(
     df.to_csv(path, index=False)
 
 
-def save_weights_hammerstein(
+def save_weights_model_based_nn(
     params,
     prefix,
     postfix,

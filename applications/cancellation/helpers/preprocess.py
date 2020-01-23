@@ -22,6 +22,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import signal, fftpack
 
+from argparse import HelpFormatter
+from operator import attrgetter
+
 
 def select_optimizer(params):
     """Returns the Tensorflow optimizer.
@@ -165,6 +168,7 @@ def initialize(params):
 
 def load_data(fileName, params):
     """Load the full-duplex dataset from the mat file.
+
     """
 
     # Get parameters
@@ -282,91 +286,105 @@ def gen_data(x, y, y_canc, y_var, params):
     return x, y, y_orig, y_var
 
 
+class SortingHelpFormatter(HelpFormatter):
+    """Sort everything
+    """
+
+    def add_arguments(self, actions):
+        actions = sorted(actions, key=attrgetter('option_strings'))
+        super(SortingHelpFormatter, self).add_arguments(actions)
+
+
+class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter, SortingHelpFormatter):
+    """Use inheritance to get multiple formatters"""
+    pass
+
+
 def basic_parser():
     """Contains the defaults arguments used for the application.
     """
 
-    parser = argparse.ArgumentParser(description='Parameters for full duplex')
+    parser = argparse.ArgumentParser(description='Parameters for full duplex application.', formatter_class=CustomFormatter)
 
     # Hardware settings
     parser.add_argument(
         "--sampling-freq-MHz", dest="sampling_freq_MHz", type=int, default=20,
-        help="Sampling frequency, required for correct scaling of PSD",
+        help="sampling frequency, required for correct scaling of PSD",
     )
 
     parser.add_argument(
         "--training-ratio", dest="training_ratio", type=float, default=0.9,
-        help="Ratio of total samples to use for training",
+        help="ratio of total samples to use for training",
     )
 
     parser.add_argument(
         "--training-size", dest="training_size", type=float, default=1.0,
-        help="Percentage of training set to use.",
+        help="percentage of training set to use",
     )
 
     parser.add_argument(
         "--data-scaled", dest="data_scaled", type=int, default=1,
-        help="If 1, then the data is scaled by e.g. dividing targets with std. deviation.",
+        help="if 1, then the data is scaled dividing targets with standard deviation.",
     )
 
     parser.add_argument(
         "--data-offset", dest="data_offset", type=int, default=14,
-        help="Data offset to take transmitter-receiver misalignment into account",
+        help="data offset to take transmitter-receiver misalignment into account",
     )
 
     parser.add_argument(
         "--dtype", dest="dtype", type=str, default="complex",
-        help="Specifies if we use complex-valued or split training data (complex, real).",
+        help="one of \"complex\" or \"real\", specifying if we use complex-valued or split training data",
     )
 
     parser.add_argument(
         "--data-format", dest="data_format", type=str, default="ffnn",
-        help="Specifies if we return the data in the form needed for FFNNs or RNNS (ffnn, rnn)",
+        help="one of \"ffnn\" or \"rnn\", specifying if we return the data in the form needed for FFNNs or RNNs",
     )
 
     parser.add_argument(
         "--fit-option", dest="fit_option", type=str, default="all",
-        help="Specifies if we fit to the full data or only the non-linear part (all, nl)",
+        help="one of \"all\" or \"nl\", specifying if we fit to the full data or only the non-linear part (after linear cancellation has been performed)",
     )
 
     parser.add_argument(
         "--hsi-len", dest="hsi_len", type=int, default=13,
-        help="Self-interference channel length",
+        help="self-interference channel length",
     )
 
     parser.add_argument(
         "--min-power", dest="min_power", type=int, default=1,
-        help="Minimum PA non-linearity order",
+        help="minimum PA non-linearity order considered",
     )
 
     parser.add_argument(
-        "--max-power", dest="max_power", type=int, default=5,
-        help="Maximum PA non-linearity order",
+        "--max-power", dest="max_power", type=int, default=3,
+        help="maximum PA non-linearity order considered",
     )
 
     parser.add_argument(
         "--htnn-struct", dest="htnn_struct", type=str, default="C-C",
-        help="Indicate the network structure. First layer has options B=bypass, T1, T2, E, C, R and second layer only has option C. Defaults to R-C .",
+        help="indicates the structure of the model-based NN. First layer has options \"B\"=bypass, \"T1\", \"T2\", \"E\", \"C\", and \"R\". The second layer only has option \"C\".",
     )
 
     parser.add_argument(
-        "--ffnn-struct", dest="ffnn_struct", type=str, default="1",
-        help="Indicate number of layers and number of neurons in each, e.g. 1-1 indicates 2 hidden layers and 1 neuron in each. The input and output are fixed",
+        "--ffnn-struct", dest="ffnn_struct", type=str, default="10",
+        help="indicates the structure of the neural networks, that is, the number of layers and number of neurons in each. The structure \"1-1\" indicates 2 hidden layers and 1 neuron in each.",
     )
 
     parser.add_argument(
         "--activation", dest="activation", type=str, default="relu",
-        help="Indicates which activation function to use",
+        help="Options of activation functions for the complex-valued NN hidden layers are \"amp_phase\", \"cardioid\", \"mrelu\", \"relu\", and \"zrelu\"",
     )
 
     parser.add_argument(
         "--rnn-cell", dest="rnn_cell", type=str, default="simple",
-        help="Define the cell type for the RNN",
+        help="define the cell type for the RNN. For real-valued RNN, one of \"simple\", \"gru\", and \"lstm\". For complex-valued RNN, only \"simple\".",
     )
 
     parser.add_argument(
         "--rnn-stateful", dest="rnn_stateful", type=int, default=0,
-        help="If 1, last state for each sample at index i in a batch will be used as initial state for the sample of index i in the following batch",
+        help="if 1, last state for each sample at index i in a batch will be used as initial state for the sample of index i in the following batch",
     )
 
     parser.add_argument(
@@ -376,186 +394,186 @@ def basic_parser():
 
     parser.add_argument(
         "--optimizer", dest="optimizer", type=str, default="ftrl",
-        help="The optimizer used to generate results (ftrl, adam). Please remember to change your parameters when using a different optimizer",
+        help="one of  \"adadelta\", \"adagrad\", \"adam\", \"adamax\", \"ftrl\", \"nadam\", \"rmsprop\" and \"sgd\"",
     )
 
     parser.add_argument(
         "--initializer", dest="initializer", type=str, default="normal",
-        help="One of (normal or uniform) for normal neural networks or (normal, uniform, hammerstein_normal, hammerstein_rayleigh, hammerstein_uniform) for Hammerstein network.",
+        help="initializer for weights. For neural networks, one of \"normal\" or \"uniform\". For model-based NN, one of \"normal\", \"uniform\", \"hammerstein_normal\", \"hammerstein_rayleigh\", and \"hammerstein_uniform\"",
     )
 
     parser.add_argument(
         "--seed", dest="seed", type=int, default=42,
-        help="The default seed",
+        help="default seed",
     )
 
     parser.add_argument(
         "--n-seeds", dest="n_seeds", type=int, default=1,
-        help="Number of runs with different seeds",
+        help="number of runs with different seeds",
     )
 
     parser.add_argument(
-        "--n-epochs", dest="n_epochs", type=int, default=10,
-        help="Number of training epochs for NN training",
+        "--n-epochs", dest="n_epochs", type=int, default=50,
+        help="number of training epochs for NN training",
     )
 
     parser.add_argument(
         "--shuffle", dest="shuffle", type=int, default=0,
-        help="If 1, then shuffle the training data",
+        help="if 1, then shuffle the training data",
     )
 
     parser.add_argument(
         "--lr-schedule", dest="lr_schedule", type=int, default=0,
-        help="If 1, enable learning-rate scheduling",
+        help="if 1, enable learning-rate scheduling",
     )
     parser.add_argument(
         "--learning-rate", dest="learning_rate", type=float, default=0.25,
-        help="Learning rate for NN training",
+        help="learning rate for NN training",
     )
 
     parser.add_argument(
         "--batch-size", dest="batch_size", type=int, default=8,
-        help="Batch size for NN training",
+        help="batch size for NN training",
     )
 
     parser.add_argument(
         "--regularizer", dest="regularizer", type=str, default=None,
-        help="If 1, use weight regularization, either l1 or l2.",
+        help="if 1, use weight regularization, either l1 or l2.",
     )
 
     parser.add_argument(
         "--weight-decay", dest="weight_decay", type=float, default=1e-9,
-        help="Weight decay",
+        help="weight decay for regularization",
     )
 
     parser.add_argument(
         "--momentum", dest="momentum", type=float, default=0.0,
-        help="Momentum",
+        help="momentum",
     )
 
     parser.add_argument(
         "--gradient-clipping-param1", dest="gradient_clipping_param1", type=float, default=0.0,
-        help="First defined parameter in the Hammerstein model (either K1, or gain).",
+        help="if different from 0.0, applies gradient clipping to first parameter in IQ mixer layer of model-based NN (either K1, or gain)",
     )
 
     parser.add_argument(
         "--gradient-clipping-param2", dest="gradient_clipping_param2", type=float, default=0.0,
-        help="First defined parameter in the Hammerstein model (either K2, or phase).",
+        help="if different from 0.0, applies gradient clipping to second parameter in IQ mixer layer of model-based NN (either K1, or gain)",
     )
 
     parser.add_argument(
         "--gradient-clipping", dest="gradient_clipping", type=float, default=0.0,
-        help="General gradient clipping for neural network weights or the h parameters in the Hammersterin model.",
+        help="if different from 0.0, applies general gradient clipping for neural network weights or the h parameters in the model-based NN",
     )
 
     parser.add_argument(
         "--search", dest="search", type=int, default=0,
-        help="If 1, perform a grid-search for the optimal parameters, otherwise just fit using defaults",
+        help="if 1, perform a grid-search for the optimal parameters, otherwise just fit using defaults",
     )
 
     parser.add_argument(
-        "--n-search-points", dest="n_search_points", type=int, default=10,
-        help="Number of initialization points for hyperparameter tuning",
+        "--n-search-points", dest="n_search_points", type=int, default=20,
+        help="number of initialization points for hyperparameter tuning",
     )
 
     parser.add_argument(
         "--min-batch-size", dest="min_batch_size", type=int, default=8,
-        help="Minimum batch size for search",
+        help="minimum batch size for search",
     )
 
     parser.add_argument(
         "--max-batch-size", dest="max_batch_size", type=int, default=64,
-        help="Maximum batch size for search",
+        help="maximum batch size for search",
     )
 
     parser.add_argument(
         "--min-learning-rate", dest="min_learning_rate", type=float, default=1e-2,
-        help="Minimum learning-rate for search",
+        help="minimum learning-rate for search",
     )
 
     parser.add_argument(
         "--max-learning-rate", dest="max_learning_rate", type=float, default=0.5,
-        help="Maximum learning-rate for search",
+        help="maximum learning-rate for search",
     )
 
     parser.add_argument(
         "--cv", dest="cv", type=int, default=0,
-        help="If 1, do cross-validation, the selection of the best hyper-parameters are then based on the average from the cross-validation, and we then retrain the model on the whole data-set using the best hyper-parameters.",
+        help="if 1, the selection of the best hyper-parameters is based on the average from the cross-validation, and we then retrain the model on the whole data-set using the best hyper-parameters.",
     )
 
     parser.add_argument(
         "--cv-folds", dest="cv_folds", type=int, default=5,
-        help="Specifies number of cross-validation folds",
+        help="number of cross-validation folds",
     )
 
     parser.add_argument(
         "--n-cv-seeds", dest="n_cv_seeds", type=int, default=5,
-        help="Specifies number of seeds to use for each cross-validation fold",
+        help="number of seeds to use for each cross-validation fold",
     )
 
     parser.add_argument(
         "--n-cv-epochs", dest="n_cv_epochs", type=int, default=20,
-        help="Number of epochs to train for during cross-validation",
+        help="number of epochs to train for during cross-validation",
     )
 
     parser.add_argument(
         "--mp", dest="mp", type=int, default=0,
-        help="If 1, enable multiprocessing",
+        help="if 1, enable multiprocessing",
     )
 
     parser.add_argument(
         "--n-jobs", dest="n_jobs", type=int, default=1,
-        help="Number of parallel jobs to run at a time",
+        help="number of parallel jobs to run at a time, if -1, use all available",
     )
 
     parser.add_argument(
         "--search-width", dest="search_width", type=int, default=0,
-        help="If 1, search the width in an interval with some steps",
+        help="if 1, search the width in an interval with some steps (or powers of the model-based NN)",
     )
 
     parser.add_argument(
         "--min-width", dest="min_width", type=int, default=1,
-        help="Minimum width for width search for NN",
+        help="minimum width for width search for NN (or power of the model-based NN)",
     )
 
     parser.add_argument(
         "--max-width", dest="max_width", type=int, default=10,
-        help="Maximum width for width search for NN",
+        help="maximum width for width search for NN (or power of the model-based NN)",
     )
 
     parser.add_argument(
         "--step-width", dest="step_width", type=int, default=1,
-        help="Step in width search for NN",
+        help="step in width search for NN (or power of the model-bsaed NN)",
     )
 
     parser.add_argument(
         "--search-training-size", dest="search_training_size", type=int, default=0,
-        help="If 1, then after selecting optimal hyper opt, will also check different training set sizes. Runs after CV so requires CV=1",
+        help="if 1, then after selecting optimal hyper opt, will also check different training set sizes. Runs after CV so requires CV=1",
     )
 
     parser.add_argument(
         "--min-training-size", dest="min_training_size", type=int, default=25,
-        help="Minimum percentage of training set used for training set sizes",
+        help="minimum percentage of training set used for training set sizes search",
     )
 
     parser.add_argument(
         "--max-training-size", dest="max_training_size", type=int, default=100,
-        help="Maximum percentage of training set used for training set sizes",
+        help="maximum percentage of training set used for training set sizes search",
     )
 
     parser.add_argument(
         "--step-training-size", dest="step_training_size", type=int, default=25,
-        help="Step of percentage of training set used for training set sizes",
+        help="Step of percentage of training set used for training set sizes search",
     )
 
     parser.add_argument(
         "--save", dest="save", type=int, default=0,
-        help="If 1, save the results",
+        help="if 1, save the results in the \"results\" directory with the \"results\" prefix, otherwise use the \"tmp\" prefix",
     )
 
     parser.add_argument(
         "--exp-name", dest="exp_name", type=str, default=None,
-        help="Additional naming for experiment",
+        help="additional naming for experiment",
     )
 
     parser.add_argument(

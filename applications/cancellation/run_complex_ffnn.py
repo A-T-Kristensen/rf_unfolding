@@ -147,9 +147,10 @@ if __name__ == '__main__':
     parser = basic_parser()
 
     # File specific defaults
-    parser.set_defaults(n_epochs=20)
-    parser.set_defaults(learning_rate=0.5)
-    parser.set_defaults(batch_size=32)
+    parser.set_defaults(n_epochs=50)
+    parser.set_defaults(learning_rate=0.0045)
+    parser.set_defaults(batch_size=62)
+    parser.set_defaults(optimizer="adam")
     parser.set_defaults(ffnn_struct="10")
     parser.set_defaults(dtype="complex64")
     parser.set_defaults(data_format="ffnn")

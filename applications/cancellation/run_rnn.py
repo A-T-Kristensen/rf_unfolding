@@ -124,10 +124,11 @@ if __name__ == '__main__':
 
     parser = basic_parser()
 
-    parser.set_defaults(n_epochs=20)
-    parser.set_defaults(learning_rate=0.5)
-    parser.set_defaults(batch_size=32)
-    parser.set_defaults(ffnn_struct="10")
+    parser.set_defaults(n_epochs=50)
+    parser.set_defaults(learning_rate=0.0025)
+    parser.set_defaults(batch_size=158)
+    parser.set_defaults(optimizer="adam")
+    parser.set_defaults(ffnn_struct="20")
     parser.set_defaults(dtype="float32")
     parser.set_defaults(data_format="rnn")
     parser.set_defaults(fit_option="nl")

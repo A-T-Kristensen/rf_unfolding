@@ -199,7 +199,7 @@ def flop_IQMixer(params, calculation="optimistic", algo="default"):
     return n_add, n_mult, 0
 
 
-def flop_hammerstein_l2(params, calculation="optimistic"):
+def flop_hammerstein_basis_functions(params, calculation="optimistic"):
     """Number of FLOPs for the powers of the Hammerstein model.
 
     We assume the following for calculating powers
@@ -244,7 +244,7 @@ def flop_hammerstein_l2(params, calculation="optimistic"):
     return n_add, n_mult, 0
 
 
-def flop_hammerstein_l3(params, algo="default"):
+def flop_hammerstein(params, algo="default"):
     """Calculate the number of FLOPs when multiplying and adding all the
     power values with the coefficients.
 
@@ -283,7 +283,7 @@ def flop_hammerstein_l3(params, algo="default"):
     return n_add, n_mult, 0
 
 
-def flop_hammerstein(params, calculation="optimistic", algo="default"):
+def flop_model_based_nn(params, calculation="optimistic", algo="default"):
     """Function computing the total number of FLOPs for the Hammerstein model.
 
     Parameters
@@ -307,8 +307,8 @@ def flop_hammerstein(params, calculation="optimistic", algo="default"):
     """
 
     l1_add, l1_mult, l1_act = flop_IQMixer(params, calculation, algo)
-    l2_add, l2_mult, l2_act = flop_hammerstein_l2(params, calculation)
-    l3_add, l3_mult, l3_act = flop_hammerstein_l3(params, algo)
+    l2_add, l2_mult, l2_act = flop_hammerstein_basis_functions(params, calculation)
+    l3_add, l3_mult, l3_act = flop_hammerstein(params, algo)
 
     n_add        = l1_add + l2_add + l3_add
     n_mult       = l1_mult + l2_mult + l3_mult

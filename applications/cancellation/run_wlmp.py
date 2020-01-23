@@ -158,9 +158,9 @@ def main(params):
 if __name__ == '__main__':
 
     parser = basic_parser()
-    params, unknown = parser.parse_known_args()
+    parser.set_defaults(data_scaled=0)
 
-    params.data_scaled = 0
+    params, unknown = parser.parse_known_args()
 
     if unknown:
         raise ValueError("This argument {} in unknown".format(unknown))

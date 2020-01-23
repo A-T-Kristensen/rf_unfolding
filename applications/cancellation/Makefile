@@ -23,8 +23,8 @@ SHELL := /bin/bash
 HTNN_OPT_ADADELTA = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adadelta
 NN_OPT_ADADELTA = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adadelta
 
-HTNN_OPT_ADAGRAD = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adagrad
-NN_OPT_ADAGRAD = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adagrad
+HTNN_OPT_ADAGRAD = --min-batch-size=1 --max-batch-size=16 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=adagrad
+NN_OPT_ADAGRAD = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=adagrad
 
 HTNN_OPT_ADAM = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adam
 NN_OPT_ADAM = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adam
@@ -61,11 +61,11 @@ TRAIN_OPT_TEST = --n-epochs=2 --n-seeds=2 --search-training-size=0
 COMMON_OPT_TEST = $(SEARCH_OPT_TEST) $(MP_OPT_TEST) $(CV_OPT_TEST) $(TRAIN_OPT_TEST) --save=0 --exp-name=test_scripts
 
 test_all:
-	python run_hammerstein.py $(COMMON_OPT_TEST) $(HTNN_OPT_FTRL) --htnn-struct=T1-C
-	python run_hammerstein.py $(COMMON_OPT_TEST) $(HTNN_OPT_FTRL) --htnn-struct=T2-C
-	python run_hammerstein.py $(COMMON_OPT_TEST) $(HTNN_OPT_FTRL) --htnn-struct=E-C
-	python run_hammerstein.py $(COMMON_OPT_TEST) $(HTNN_OPT_FTRL) --htnn-struct=C-C
-	python run_hammerstein.py $(COMMON_OPT_TEST) $(HTNN_OPT_FTRL) --htnn-struct=R-C
+	python run_model_based_nn.py $(COMMON_OPT_TEST) $(HTNN_OPT_FTRL) --htnn-struct=T1-C
+	python run_model_based_nn.py $(COMMON_OPT_TEST) $(HTNN_OPT_FTRL) --htnn-struct=T2-C
+	python run_model_based_nn.py $(COMMON_OPT_TEST) $(HTNN_OPT_FTRL) --htnn-struct=E-C
+	python run_model_based_nn.py $(COMMON_OPT_TEST) $(HTNN_OPT_FTRL) --htnn-struct=C-C
+	python run_model_based_nn.py $(COMMON_OPT_TEST) $(HTNN_OPT_FTRL) --htnn-struct=R-C
 	python run_ffnn.py $(COMMON_OPT_TEST) $(NN_OPT_ADAM) --ffnn-struct=1
 	python run_ffnn.py $(COMMON_OPT_TEST) $(NN_OPT_ADAM) --ffnn-struct=1-1-1
 	python run_complex_ffnn.py $(COMMON_OPT_TEST) $(NN_OPT_ADAM) --ffnn-struct=1
@@ -74,6 +74,7 @@ test_all:
 	python run_rnn.py $(COMMON_OPT_TEST) $(RNN_OPT_ADAM) --ffnn-struct=1-1-1 --rnn-cell=simple
 	python run_complex_rnn.py $(COMMON_OPT_TEST) $(RNN_OPT_ADAM) --ffnn-struct=1 --rnn-cell=simple
 	python run_complex_rnn.py $(COMMON_OPT_TEST) $(RNN_OPT_ADAM) --ffnn-struct=1-1-1 --rnn-cell=simple
+	python run_wlmp.py --save=1 --search-width=1 --min-width=1 --max-width=9 --step-width=2
 
 #--------------------------- MAIN EXPERIMENTS --------------------------------#
 
@@ -94,9 +95,9 @@ ffnn_ftrl:
 	python run_ffnn.py $(COMMON_OPT) $(NN_OPT_FTRL) --ffnn-struct=1-1-1 --search-width=1 --min-width=2 --max-width=20 --step-width=2
 
 hammerstein_ftrl:
-	python run_hammerstein.py $(COMMON_OPT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --search-width=1 --min-width=3 --max-width=9 --step-width=2
-	python run_hammerstein.py $(COMMON_OPT) $(HTNN_OPT_FTRL) --htnn-struct=R-C --search-width=1 --min-width=3 --max-width=9 --step-width=2
-	python run_hammerstein.py $(COMMON_OPT) $(HTNN_OPT_FTRL) --htnn-struct=B-C --search-width=1 --min-width=3 --max-width=9 --step-width=2
+	python run_model_based_nn.py $(COMMON_OPT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --search-width=1 --min-width=3 --max-width=9 --step-width=2
+	python run_model_based_nn.py $(COMMON_OPT) $(HTNN_OPT_FTRL) --htnn-struct=R-C --search-width=1 --min-width=3 --max-width=9 --step-width=2
+	python run_model_based_nn.py $(COMMON_OPT) $(HTNN_OPT_FTRL) --htnn-struct=B-C --search-width=1 --min-width=3 --max-width=9 --step-width=2
 
 complex_rnn_ftrl:
 	python run_complex_rnn.py $(COMMON_OPT) $(RNN_OPT_FTRL) --ffnn-struct=1 --rnn-cell=simple --search-width=1 --min-width=2 --max-width=20 --step-width=2
@@ -116,8 +117,8 @@ ffnn_adam:
 	python run_ffnn.py $(COMMON_OPT) $(NN_OPT_ADAM) --ffnn-struct=1-1-1 --search-width=1 --min-width=2 --max-width=20 --step-width=2
 
 hammerstein_adam:
-	python run_hammerstein.py $(COMMON_OPT) $(HTNN_OPT_ADAM) --htnn-struct=C-C --search-width=1 --min-width=3 --max-width=9 --step-width=2
-	python run_hammerstein.py $(COMMON_OPT) $(HTNN_OPT_ADAM) --htnn-struct=R-C --search-width=1 --min-width=3 --max-width=9 --step-width=2
+	python run_model_based_nn.py $(COMMON_OPT) $(HTNN_OPT_ADAM) --htnn-struct=C-C --search-width=1 --min-width=3 --max-width=9 --step-width=2
+	python run_model_based_nn.py $(COMMON_OPT) $(HTNN_OPT_ADAM) --htnn-struct=R-C --search-width=1 --min-width=3 --max-width=9 --step-width=2
 
 complex_rnn_adam:
 	python run_complex_rnn.py $(COMMON_OPT) $(RNN_OPT_ADAM) --ffnn-struct=1 --rnn-cell=simple --search-width=1 --min-width=2 --max-width=20 --step-width=2
@@ -144,26 +145,26 @@ run_all: run_all_ftrl run_all_adam
 COMMON_OPT_HAMMERSTEIN_TYPE = $(SEARCH_OPT) $(MP_OPT) $(CV_OPT) $(TRAIN_OPT) --save=0 --exp-name=htnn_type --search-width=1 --min-width=3 --max-width=9 --step-width=2
 
 hammerstein_type:
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=T1-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=T2-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=E-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=C-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=R-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=B-C --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=T1-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=T2-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=E-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=C-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=R-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_TYPE) $(HTNN_OPT_FTRL) --htnn-struct=B-C --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
 
 
 # Experiments for initialization of Hammerstein, assuming we already have
 COMMON_OPT_HAMMERSTEIN_INIT = $(SEARCH_OPT) $(MP_OPT) $(CV_OPT) $(TRAIN_OPT) --save=0 --exp-name=htnn_init --search-width=1 --min-width=3 --max-width=9 --step-width=2
 
 hammerstein_init:
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=R-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=normal
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=R-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=normal
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --gradient-clipping-param1=1.0 --gradient-clipping-param2=0.001 --gradient-clipping=0.1 --initializer=hammerstein_rayleigh
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=R-C --gradient-clipping-param1=1.0 --gradient-clipping-param2=0.001 --gradient-clipping=0.1 --initializer=hammerstein_rayleigh
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --gradient-clipping-param1=1.0 --gradient-clipping-param2=0.001 --gradient-clipping=0.1 --initializer=normal
-	python run_hammerstein.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=R-C --gradient-clipping-param1=1.0 --gradient-clipping-param2=0.001 --gradient-clipping=0.1 --initializer=normal
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=R-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=hammerstein_rayleigh
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=normal
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=R-C --gradient-clipping-param1=0.0 --gradient-clipping-param2=0.0 --gradient-clipping=0.0 --initializer=normal
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --gradient-clipping-param1=1.0 --gradient-clipping-param2=0.001 --gradient-clipping=0.1 --initializer=hammerstein_rayleigh
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=R-C --gradient-clipping-param1=1.0 --gradient-clipping-param2=0.001 --gradient-clipping=0.1 --initializer=hammerstein_rayleigh
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --gradient-clipping-param1=1.0 --gradient-clipping-param2=0.001 --gradient-clipping=0.1 --initializer=normal
+	python run_model_based_nn.py $(COMMON_OPT_HAMMERSTEIN_INIT) $(HTNN_OPT_FTRL) --htnn-struct=R-C --gradient-clipping-param1=1.0 --gradient-clipping-param2=0.001 --gradient-clipping=0.1 --initializer=normal
 
 #----------------------------- ACTIVCATIONS ----------------------------------#
 
@@ -204,53 +205,54 @@ learn_all_ftrl:
 #----------------------------- OPTIMIZERS ----------------------------------#
 
 # Generate results for all the different optimizers
-OPTIMIZER_COMMON_OPT = $(SEARCH_OPT) $(MP_OPT) $(CV_OPT) $(TRAIN_OPT) --save=1
+# We just try for them most simple model and the most complex
+OPTIMIZER_COMMON_OPT = $(SEARCH_OPT) $(MP_OPT) $(CV_OPT) $(TRAIN_OPT) --save=1 --exp-name=optimizer --search-width=1 --min-width=3 --max-width=9 --step-width=6
 
 complex_ffnn_optimizer:
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADADELTA) --ffnn-struct=10 --fit-option=all
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADAGRAD) --ffnn-struct=10 --fit-option=all
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADAMAX) --ffnn-struct=10 --fit-option=all
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_NADAM) --ffnn-struct=10 --fit-option=all
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_RMSPROP) --ffnn-struct=10 --fit-option=all
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_SGD) --ffnn-struct=10 --fit-option=all
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADADELTA) --ffnn-struct=10 --fit-option=nl
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADAGRAD) --ffnn-struct=10 --fit-option=nl
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADAMAX) --ffnn-struct=10 --fit-option=nl
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_NADAM) --ffnn-struct=10 --fit-option=nl
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_RMSPROP) --ffnn-struct=10 --fit-option=nl
-	python run_complex_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_SGD) --ffnn-struct=10 --fit-option=nl
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADADELTA) --ffnn-struct=10 --fit-option=all
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADAGRAD) --ffnn-struct=10 --fit-option=all
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADAMAX) --ffnn-struct=10 --fit-option=all
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_NADAM) --ffnn-struct=10 --fit-option=all
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_RMSPROP) --ffnn-struct=10 --fit-option=all
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_SGD) --ffnn-struct=10 --fit-option=all
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADADELTA) --ffnn-struct=10 --fit-option=nl
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADAGRAD) --ffnn-struct=10 --fit-option=nl
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADAMAX) --ffnn-struct=10 --fit-option=nl
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_NADAM) --ffnn-struct=10 --fit-option=nl
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_RMSPROP) --ffnn-struct=10 --fit-option=nl
+	python run_complex_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_SGD) --ffnn-struct=10 --fit-option=nl
 
 ffnn_optimizer:
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADADELTA) --ffnn-struct=20 --fit-option=all
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADAGRAD) --ffnn-struct=20 --fit-option=all
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADAMAX) --ffnn-struct=20 --fit-option=all
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_FTRL) --ffnn-struct=20 --fit-option=all
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_NADAM) --ffnn-struct=20 --fit-option=all
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_RMSPROP) --ffnn-struct=20 --fit-option=all
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_SGD) --ffnn-struct=20 --fit-option=all
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADADELTA) --ffnn-struct=20 --fit-option=nl
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADAGRAD) --ffnn-struct=20 --fit-option=nl
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_ADAMAX) --ffnn-struct=20 --fit-option=nl
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_FTRL) --ffnn-struct=20 --fit-option=nl
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_NADAM) --ffnn-struct=20 --fit-option=nl
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_RMSPROP) --ffnn-struct=20 --fit-option=nl
-	python run_ffnn.py $(ALL_COMMON_OPT) $(NN_OPT_SGD) --ffnn-struct=20 --fit-option=nl
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADADELTA) --ffnn-struct=20 --fit-option=all
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADAGRAD) --ffnn-struct=20 --fit-option=all
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADAMAX) --ffnn-struct=20 --fit-option=all
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_FTRL) --ffnn-struct=20 --fit-option=all
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_NADAM) --ffnn-struct=20 --fit-option=all
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_RMSPROP) --ffnn-struct=20 --fit-option=all
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_SGD) --ffnn-struct=20 --fit-option=all
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADADELTA) --ffnn-struct=20 --fit-option=nl
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADAGRAD) --ffnn-struct=20 --fit-option=nl
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_ADAMAX) --ffnn-struct=20 --fit-option=nl
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_FTRL) --ffnn-struct=20 --fit-option=nl
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_NADAM) --ffnn-struct=20 --fit-option=nl
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_RMSPROP) --ffnn-struct=20 --fit-option=nl
+	python run_ffnn.py $(OPTIMIZER_COMMON_OPT) $(NN_OPT_SGD) --ffnn-struct=20 --fit-option=nl
 
 hammerstein_optimizer:
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_ADADELTA) --htnn-struct=C-C --fit-option=all
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_ADAGRAD) --htnn-struct=C-C --fit-option=all
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_ADAMAX) --htnn-struct=C-C --fit-option=all
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --fit-option=all
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_NADAM) --htnn-struct=C-C --fit-option=all
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_RMSPROP) --htnn-struct=C-C --fit-option=all
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_SGD) --htnn-struct=C-C --fit-option=all
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_ADADELTA) --htnn-struct=C-C --fit-option=nl
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_ADAGRAD) --htnn-struct=C-C --fit-option=nl
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_ADAMAX) --htnn-struct=C-C --fit-option=nl
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --fit-option=nl
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_NADAM) --htnn-struct=C-C --fit-option=nl
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_RMSPROP) --htnn-struct=C-C --fit-option=nl
-	python run_hammerstein.py $(ALL_COMMON_OPT) $(HTNN_OPT_SGD) --htnn-struct=C-C --fit-option=nl
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_ADADELTA) --htnn-struct=C-C --fit-option=all
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_ADAGRAD) --htnn-struct=C-C --fit-option=all
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_ADAMAX) --htnn-struct=C-C --fit-option=all
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --fit-option=all
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_NADAM) --htnn-struct=C-C --fit-option=all
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_RMSPROP) --htnn-struct=C-C --fit-option=all
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_SGD) --htnn-struct=C-C --fit-option=all
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_ADADELTA) --htnn-struct=C-C --fit-option=nl
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_ADAGRAD) --htnn-struct=C-C --fit-option=nl
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_ADAMAX) --htnn-struct=C-C --fit-option=nl
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_FTRL) --htnn-struct=C-C --fit-option=nl
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_NADAM) --htnn-struct=C-C --fit-option=nl
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_RMSPROP) --htnn-struct=C-C --fit-option=nl
+	python run_model_based_nn.py $(OPTIMIZER_COMMON_OPT) $(HTNN_OPT_SGD) --htnn-struct=C-C --fit-option=nl
 
 #----------------------------- VARIABLES ----------------------------------#
 

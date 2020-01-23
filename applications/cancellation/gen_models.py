@@ -39,7 +39,7 @@ def gen_model(params, name):
     params  : :obj:
         Parameters.
     name    : str
-        Name of the model (hammerstein, complex_rnn, rnn, complex_ffnn, ffnn).
+        Name of the model (model_based_nn, complex_rnn, rnn, complex_ffnn, ffnn).
 
     Returns
     -------
@@ -47,8 +47,8 @@ def gen_model(params, name):
         The Tensorflow model.
     """
 
-    if "hammerstein" in name:
-        model = gen_hammerstein(params)
+    if "model_based_nn" in name:
+        model = gen_model_based_nn(params)
     elif "complex_rnn" in name:
         model = gen_complex_rnn(params)
     elif "rnn" in name:
@@ -137,7 +137,7 @@ def gen_complex_ffnn(params):
         activation = complex_split_relu
     elif params.activation == "amp_phase":
         activation = complex_amp_phase_exp
-    elif params.activation == "cardiodid":
+    elif params.activation == "cardioid":
         activation = complex_cardioid
     elif params.activation == "mrelu":
         activation = complex_mod_relu
@@ -321,8 +321,8 @@ def gen_rnn(params, batch_size=16, learning_rate=0.01):
     return model
 
 
-def gen_hammerstein(params):
-    """Generates the Hammerstein neural network.
+def gen_model_based_nn(params):
+    """Generates the model-based neural network.
 
     Parameters
     ----------

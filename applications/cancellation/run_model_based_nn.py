@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Fit the Hammerstein-type neural network to the full-duplex training set.
+Fit the model-based neural network to the full-duplex training set.
 """
 
 import sys
@@ -19,16 +19,16 @@ import numpy as np
 if tf.__version__[0] != "2":
     tf.enable_eager_execution()
 
-from gen_models import gen_hammerstein
+from gen_models import gen_model_based_nn
 from complex_nn.complex_losses import complex_mean_squared_error
 
 from helpers.preprocess import basic_parser, set_seeds, select_optimizer
 from helpers.training import single_run, parameter_search_parallel
-from helpers.flop import flop_hammerstein
+from helpers.flop import flop_model_based_nn
 
 
 def train(params, batch_size, learning_rate, x_train, x_test, y_train, y_test, seed):
-    """Training loop for the complex-valued Hammerstein neural-network.
+    """Training loop for the complex-valued model-based neural-network.
     """
 
     set_seeds(seed)
@@ -37,7 +37,7 @@ def train(params, batch_size, learning_rate, x_train, x_test, y_train, y_test, s
     network_array = [layer for layer in network_array if layer != "-"]
 
     optimizer = select_optimizer(params)
-    model     = gen_hammerstein(params)
+    model     = gen_model_based_nn(params)
     f_train   = tf.function(step)
     n_batches = x_train.shape[0] // batch_size
 
@@ -198,7 +198,7 @@ def wrapper_train_parallel(args):
 def main(params):
 
     set_seeds(params.seed)
-    shared_params = ("hammerstein", "hammerstein", params, gen_hammerstein, flop_hammerstein)
+    shared_params = ("model_based_nn", "model_based_nn", params, gen_model_based_nn, flop_model_based_nn)
     print("NETWORK STRUCTURE:", params.htnn_struct)
 
     if params.search:
@@ -219,12 +219,13 @@ if __name__ == '__main__':
     parser = basic_parser()
 
     parser.set_defaults(n_epochs=50)
-    parser.set_defaults(learning_rate=0.1)
-    parser.set_defaults(batch_size=8)
-    parser.set_defaults(max_power=5)
+    parser.set_defaults(learning_rate=0.25)
+    parser.set_defaults(batch_size=6)
+    parser.set_defaults(optimizer="ftrl")
     parser.set_defaults(htnn_struct="C-C")
     parser.set_defaults(dtype="complex64")
     parser.set_defaults(data_format="ffnn")
+    parser.set_defaults(fit_option="all")
     parser.set_defaults(initializer="hammerstein_rayleigh")
 
     params, unknown = parser.parse_known_args()

@@ -27,7 +27,7 @@ from gen_models import gen_model
 
 from helpers.postprocess import gen_array, gen_stat
 from helpers.preprocess import gen_seeds, initialize, set_seeds
-from helpers.summary import save_data_hammerstein, save_data_nn
+from helpers.summary import save_data_model_based_nn, save_data_nn
 
 from sklearn.model_selection import KFold
 
@@ -39,9 +39,9 @@ def single_run(name, model_type, params, model_func, flop_func, train_func):
     Parameters
     ----------
     name        : str
-        Name of the model (hammerstein, complex_rnn, rnn, complex_ffnn, ffnn).
+        Name of the model (model_based_nn, complex_rnn, rnn, complex_ffnn, ffnn).
     model_type  : str
-        Type of model (nn, hammerstein).
+        Type of model (nn, model_based_nn).
     params      : :obj:
         Parameters.
     model_func  : :obj:
@@ -52,7 +52,7 @@ def single_run(name, model_type, params, model_func, flop_func, train_func):
         Model training function.
     """
 
-    if model_type not in ["nn", "hammerstein"]:
+    if model_type not in ["nn", "model_based_nn"]:
         raise ValueError("Specified model_type of model is incorrect")
 
     x_train, y_train, y_train_orig, x_test, y_test, y_test_orig, y_var, h_lin, y_canc_train, y_canc_test, noise, measured_noise_power = initialize(
@@ -123,7 +123,7 @@ def single_run(name, model_type, params, model_func, flop_func, train_func):
         K2_array = gen_array(result_array, "K2")
         weights_array = gen_array(result_array, "weights")
 
-        save_data_hammerstein(name, params, model, model_path, flop_func, train_dict, test_dict, canc_lin, seed_list, K1_array, K2_array, weights_array)
+        save_data_model_based_nn(name, params, model, model_path, flop_func, train_dict, test_dict, canc_lin, seed_list, K1_array, K2_array, weights_array)
 
     # Remove dir for temporary models
     try:
@@ -216,9 +216,9 @@ def parameter_search_parallel(name, model_type, params, model_func, flop_func, t
     Parameters
     ----------
     name        : str
-        Name of the model (hammerstein, complex_rnn, rnn, complex_ffnn, ffnn).
+        Name of the model (model_based_nn, complex_rnn, rnn, complex_ffnn, ffnn).
     model_type  : str
-        Type of model (nn, hammerstein).
+        Type of model (nn, model_based_nn).
     params      : :obj:
         Parameters.
     model_func  : :obj:
@@ -229,7 +229,7 @@ def parameter_search_parallel(name, model_type, params, model_func, flop_func, t
         Model training function.
     """
 
-    if model_type not in ["nn", "hammerstein"]:
+    if model_type not in ["nn", "model_based_nn"]:
         raise ValueError("Specified model_type of model is incorrect")
 
     x_train, y_train, y_train_orig, x_test, y_test, y_test_orig, y_var, h_lin, y_canc_train, y_canc_test, noise, measured_noise_power = initialize(
@@ -402,7 +402,7 @@ def parameter_search_parallel(name, model_type, params, model_func, flop_func, t
             K2_array = gen_array(result_array, "K2")
             weights_array = gen_array(result_array, "weights")
 
-            save_data_hammerstein(name, params, model, model_path, flop_func, train_dict, test_dict, canc_lin, seed_list, K1_array, K2_array, weights_array)
+            save_data_model_based_nn(name, params, model, model_path, flop_func, train_dict, test_dict, canc_lin, seed_list, K1_array, K2_array, weights_array)
 
         # Remove dir
         try:

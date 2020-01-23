@@ -141,14 +141,14 @@ if __name__ == '__main__':
 
     parser = basic_parser()
 
-    # File specific defaults
-    parser.set_defaults(n_epochs=20)
-    parser.set_defaults(learning_rate=0.5)
-    parser.set_defaults(batch_size=32)
+    parser.set_defaults(n_epochs=50)
+    parser.set_defaults(learning_rate=0.0025)
+    parser.set_defaults(batch_size=158)
+    parser.set_defaults(optimizer="adam")
     parser.set_defaults(ffnn_struct="10")
-    parser.set_defaults(fit_option="nl")
     parser.set_defaults(dtype="complex64")
     parser.set_defaults(data_format="rnn")
+    parser.set_defaults(fit_option="nl")
     parser.set_defaults(gradient_clipping=1.0)
 
     params, unknown = parser.parse_known_args()
