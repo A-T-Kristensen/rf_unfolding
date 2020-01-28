@@ -27,7 +27,7 @@ This assumes that conda-forge has been added, otherwise it can be added using th
 conda config --append channels conda-forge
 ```
 
-To setup the environment, call (you may also start by cloning base `conda create --name tf2_cpu --clone base`)
+To setup the environment, call (you may also start by cloning base `conda create --name env_rf_unfolding --clone base`)
 
 ```
 conda create -n env_rf_unfolding python=3.7

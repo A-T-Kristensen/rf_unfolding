@@ -16,31 +16,27 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL := run_all
 
-# Remember, the upper limit is exclusive
-# Setting the maximum learning-rate too high leads to finding more slightly unstable hyperparameters
-
-# Simplify these, the only difference is the chosen optimizer, in the end, we did not need special values for the diff optimizer
-HTNN_OPT_ADADELTA = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adadelta
+HTNN_OPT_ADADELTA = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=adadelta
 NN_OPT_ADADELTA = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adadelta
 
-HTNN_OPT_ADAGRAD = --min-batch-size=1 --max-batch-size=16 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=adagrad
+HTNN_OPT_ADAGRAD = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=adagrad
 NN_OPT_ADAGRAD = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=adagrad
 
-HTNN_OPT_ADAM = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adam
+HTNN_OPT_ADAM = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=adam
 NN_OPT_ADAM = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adam
 RNN_OPT_ADAM = --min-batch-size=16 --max-batch-size=256 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --rnn-unroll=1 --optimizer=adam
 
-HTNN_OPT_ADAMAX = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adamax
+HTNN_OPT_ADAMAX = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=adamax
 NN_OPT_ADAMAX = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=adamax
 
 HTNN_OPT_FTRL = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=ftrl
 NN_OPT_FTRL = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=ftrl
 RNN_OPT_FTRL = --min-batch-size=16 --max-batch-size=256 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --rnn-unroll=1 --optimizer=ftrl
 
-HTNN_OPT_NADAM = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=nadam
+HTNN_OPT_NADAM = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=nadam
 NN_OPT_NADAM = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=nadam
 
-HTNN_OPT_RMSPROP = --min-batch-size=4 --max-batch-size=32 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=rmsprop
+HTNN_OPT_RMSPROP = --min-batch-size=4 --max-batch-size=32 --min-learning-rate=1e-3 --max-learning-rate=5e-1 --optimizer=rmsprop
 NN_OPT_RMSPROP = --min-batch-size=4 --max-batch-size=64 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=rmsprop
 
 HTNN_OPT_SGD = --min-batch-size=4 --max-batch-size=16 --min-learning-rate=1e-4 --max-learning-rate=5e-1 --optimizer=sgd

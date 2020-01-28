@@ -29,9 +29,17 @@ This will train a complex-valued neural network with 1 hidden layer of 10 comple
 
 If you want to generate the results used for the different papers, simply run the command in the next sections.
 
+### Identification of Non-Linear RF Systems Using Backpropagation
+
+To just generate the model-based NN results, do the following:
+
+```
+make hammerstein_ftrl
+```
+
 ### Advanced Machine Learning Techniques for Self-Interference Cancellation in Full-Duplex Radios
 
-These commands will generate the results for this paper and *Identification of Non-Linear RF Systems Using Backpropagation*
+These commands will generate the results for this paper and *Advanced Machine Learning Techniques for Self-Interference Cancellation in Full-Duplex Radios*
 
 ```
 make run_all
@@ -44,10 +52,3 @@ The results will be in the [results](./results) directory.
 
 Not that these results may differ slightly from those in the paper due to some code modifications performed along the development process.
 
-### Identification of Non-Linear RF Systems Using Backpropagation
-
-To just generate the model-based NN results, do the following:
-
-```
-make hammerstein_ftrl
-```
